@@ -17,8 +17,10 @@ Alle Grafiken sind eigene SVG/CSS-Zeichnungen. Die Karte nutzt die Anmeldung von
 **Ressource hinzufügen** (Einstellungen → Dashboards → ⋮ → Ressourcen → Ressource hinzufügen, Typ „JavaScript-Modul“):
 
 ```
-https://cdn.jsdelivr.net/gh/indy1979-hub/nexus-dashboard@v1.0.0/dist/nexus-dashboard.js
+https://cdn.jsdelivr.net/gh/indy1979-hub/nexus-dashboard@main/dist/nexus-dashboard.js
 ```
+
+Für eine feste Version statt `@main` einen Commit-Hash einsetzen, z. B. `@<commit>`.
 
 **Dashboard anlegen**: neues Dashboard → Ansicht vom Typ „Panel (einzelne Karte)“ → Karte manuell hinzufügen, Inhalt aus [`example-config.yaml`](example-config.yaml) einfügen und die Entitäten durch eigene ersetzen.
 
