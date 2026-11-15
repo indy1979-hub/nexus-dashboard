@@ -223,7 +223,9 @@ input { font: inherit; }
 }
 
 .span2 { grid-column: span 2; }
-.extra-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.extra-masonry { column-count: 2; column-gap: 12px; }
+.extra-item { break-inside: avoid; margin-bottom: 12px; display: inline-block; width: 100%; }
+.media-split { display: grid; grid-template-columns: minmax(150px, 230px) minmax(0, 1fr); gap: 10px; align-items: start; }
 .ha-embed .ha-card-host {
   --ha-card-background: rgba(255,255,255,.06);
   --card-background-color: rgba(12, 18, 30, .85);
@@ -253,9 +255,12 @@ input { font: inherit; }
   .board > .stack { border-bottom: 1px solid var(--line-2); }
 }
 @media (max-width: 1200px) {
-  .extra-cols { grid-template-columns: 1fr; }
+  .extra-masonry { column-count: 1; }
+  .media-split { grid-template-columns: minmax(120px, 180px) minmax(0, 1fr); }
   .week-top { grid-template-columns: 1fr !important; }
-  .extra-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .extra-masonry { column-count: 2; column-gap: 12px; }
+.extra-item { break-inside: avoid; margin-bottom: 12px; display: inline-block; width: 100%; }
+.media-split { display: grid; grid-template-columns: minmax(150px, 230px) minmax(0, 1fr); gap: 10px; align-items: start; }
 .ha-embed .ha-card-host {
   --ha-card-background: rgba(255,255,255,.06);
   --card-background-color: rgba(12, 18, 30, .85);

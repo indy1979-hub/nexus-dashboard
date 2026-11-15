@@ -40,54 +40,67 @@ function useSourceSections(page: ExtraPageConf): Section[] {
 
 const SMALL = new Set(["tile", "entity", "button", "gauge", "sensor"]);
 
+const MEDIA = new Set(["picture-elements", "picture", "picture-entity", "picture-glance"]);
+
 function SectionBlock({ s }: { s: Section }) {
   const cards = s.cards ?? [];
   const head = cards[0]?.type === "heading" ? String(cards[0].heading ?? "") : "";
   const rest = head ? cards.slice(1) : cards;
   const small = rest.filter((c) => SMALL.has(String(c.type)));
-  const big = rest.filter((c) => !SMALL.has(String(c.type)));
+  const media = rest.filter((c) => MEDIA.has(String(c.type)));
+  const others = rest.filter((c) => !SMALL.has(String(c.type)) && !MEDIA.has(String(c.type)));
   const span = Math.min(4, Math.max(1, s.column_span ?? 2));
+  const grid = (min: number) => ({ display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${min}px, 1fr))`, gap: 8 });
   return (
-    <Card>
+    <Card style={{ padding: "12px 14px" }}>
       {head && (
-        <div className="eyebrow" style={{ color: "var(--ink-2)", marginBottom: 12, fontSize: 12 }}>
+        <div className="eyebrow" style={{ color: "var(--ink-2)", marginBottom: 8, fontSize: 11 }}>
           {head}
         </div>
       )}
       {small.length > 0 && (
-        <div className="ha-embed" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))", gap: 10, marginBottom: big.length ? 14 : 0 }}>
+        <div className="ha-embed" style={{ ...grid(150), marginBottom: media.length || others.length ? 10 : 0 }}>
           {small.map((c, i) => (
             <HaCard key={i} config={c} />
           ))}
         </div>
       )}
-      {big.length > 0 && (
-        <div className="ha-embed" style={{ display: "grid", gridTemplateColumns: span >= 3 ? "repeat(auto-fill, minmax(380px, 1fr))" : "1fr", gap: 12 }}>
-          {big.map((c, i) => (
-            <HaCard key={i} config={c} />
-          ))}
+      {media.length > 0 && others.length > 0 ? (
+        <div className="ha-embed media-split">
+          <div className="col" style={{ gap: 8 }}>
+            {media.map((c, i) => (
+              <HaCard key={i} config={c} />
+            ))}
+          </div>
+          <div className="col" style={{ gap: 8, minWidth: 0 }}>
+            {others.map((c, i) => (
+              <HaCard key={i} config={c} />
+            ))}
+          </div>
         </div>
+      ) : (
+        (media.length > 0 || others.length > 0) && (
+          <div className="ha-embed" style={span >= 3 ? grid(300) : { display: "grid", gap: 8 }}>
+            {[...media, ...others].map((c, i) => (
+              <div key={i} style={MEDIA.has(String(c.type)) ? { maxWidth: 260 } : undefined}>
+                <HaCard config={c} />
+              </div>
+            ))}
+          </div>
+        )
       )}
     </Card>
   );
 }
 
-/** Abschnitte auf zwei Spalten verteilen (jeweils in die kürzere), breite Abschnitte über die volle Breite. */
+/** Schmale Abschnitte fließen in zwei ausgeglichene Spalten, breite laufen über die volle Breite. */
 type Block = { kind: "full"; s: Section } | { kind: "cols"; cols: Section[][] };
-const weight = (s: Section) => (s.cards ?? []).reduce((w, c) => w + (SMALL.has(String(c.type)) ? 0.35 : c.type === "heading" ? 0.2 : 3), 0);
 function layout(sections: Section[]): Block[] {
   const out: Block[] = [];
   let run: Section[] = [];
   const flush = () => {
     if (!run.length) return;
-    const cols: Section[][] = [[], []];
-    const h = [0, 0];
-    run.forEach((s) => {
-      const i = h[0] <= h[1] ? 0 : 1;
-      cols[i].push(s);
-      h[i] += weight(s);
-    });
-    out.push({ kind: "cols", cols });
+    out.push({ kind: "cols", cols: [run] });
     run = [];
   };
   sections.forEach((s) => {
@@ -103,25 +116,23 @@ function layout(sections: Section[]): Block[] {
 export function ExtraPage({ page }: { page: ExtraPageConf }) {
   const sections = useSourceSections(page);
   return (
-    <div className="col" style={{ gap: 18 }}>
+    <div className="col" style={{ gap: 12 }}>
       {page.title && (
-        <div className="row" style={{ gap: 12, padding: "4px 4px 0" }}>
+        <div className="row" style={{ gap: 10, padding: "0 4px" }}>
           <span className="icon-chip">
             <Icon icon={page.icon ?? "mdi:view-dashboard-outline"} width={20} />
           </span>
-          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 600, letterSpacing: ".02em" }}>{page.title}</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 600, letterSpacing: ".02em" }}>{page.title}</h1>
         </div>
       )}
       {layout(sections).map((block, bi) =>
         block.kind === "full" ? (
           <SectionBlock key={bi} s={block.s} />
         ) : (
-          <div key={bi} className="extra-cols">
-            {block.cols.map((col, ci) => (
-              <div key={ci} className="col" style={{ gap: 18, minWidth: 0 }}>
-                {col.map((s, i) => (
-                  <SectionBlock key={i} s={s} />
-                ))}
+          <div key={bi} className="extra-masonry">
+            {block.cols.flat().map((s, i) => (
+              <div key={i} className="extra-item">
+                <SectionBlock s={s} />
               </div>
             ))}
           </div>
