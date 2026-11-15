@@ -1,0 +1,73 @@
+# Beispiel – alle Entitäten durch eigene ersetzen. Nicht genutzte Blöcke einfach weglassen.
+type: custom:nexus-dashboard
+title: Nexus
+location: Musterstadt
+address: Musterstraße 1
+person: Ich
+weather: weather.forecast_home
+tv: media_player.fernseher
+tv_plug: switch.fernseher_steckdose
+tv_room: Wohnzimmer
+vacuum: vacuum.saugroboter
+vacuum_name: Robi
+all_lights: light.alle_lampen
+phone_battery_match: mein_telefon
+night_room: Schlafzimmer
+rooms:
+  - id: wohnzimmer
+    title: Wohnzimmer
+    icon: mdi:sofa-outline
+    style: pendant          # pendant | twin | stairs
+    lights: [light.decke, light.stehlampe]
+    switches: [switch.steckdose_1, switch.steckdose_2]
+  - id: buero
+    title: Büro
+    icon: mdi:desk
+    style: twin
+    lights: [light.schreibtisch]
+  - id: schlafzimmer
+    title: Schlafzimmer
+    icon: mdi:bed-outline
+    style: stairs
+    lights: [light.nachttisch]
+  - id: garage
+    title: Garage
+    icon: mdi:warehouse
+    switches: [switch.garage_licht]
+calendars:
+  - { entity: calendar.privat, label: Privat, color: "#60a5fa" }
+  - { entity: calendar.familie, label: Familie, color: "#4ade80" }
+todos:
+  - { entity: todo.einkaufsliste, label: Einkauf }
+  - { entity: todo.haushalt, label: Haushalt }
+waste:   # entity = Tage bis zur Abholung, date = Datum (TT.MM.JJJJ oder JJJJ-MM-TT)
+  - { entity: sensor.gelber_sack, date: sensor.gelber_sack_datum, name: Gelber Sack, icon: mdi:recycle, color: "#facc15" }
+  - { entity: sensor.restmuell, date: sensor.restmuell_datum, name: Restmüll, icon: mdi:trash-can-outline, color: "#a3a3a3" }
+  - { entity: sensor.biomuell, date: sensor.biomuell_datum, name: Biomüll, icon: mdi:leaf, color: "#4ade80" }
+  - { entity: sensor.papier, date: sensor.papier_datum, name: Altpapier, icon: mdi:package-variant-closed, color: "#60a5fa" }
+routines:
+  - { entity: script.guten_morgen, label: Guten Morgen, icon: mdi:white-balance-sunny, color: "#f59e0b" }
+  - { entity: script.gute_nacht, label: Gute Nacht, icon: mdi:weather-night, color: "#6366f1" }
+night_actions:
+  - { entity: light.alle_lampen, label: Alles Licht aus, icon: mdi:lightbulb-off-outline, service: turn_off }
+  - { entity: script.gute_nacht, label: Gute Nacht, icon: mdi:weather-night }
+house_switches:
+  - { entity: light.alle_lampen, label: Lichter, icon: mdi:lightbulb-outline }
+  - { entity: switch.alle_verbraucher, label: Verbraucher, icon: mdi:power-plug-outline }
+emergency: script.notaus
+emergency_reset: script.notaus_aufheben
+warnings:
+  region: Musterkreis
+  level: sensor.warnstufe
+  prelevel: sensor.vorwarnstufe
+  alerts: [binary_sensor.warnung_1, binary_sensor.warnung_2]
+  motion: { entity: binary_sensor.bewegung_flur, label: Flur }
+gauge: { entity: sensor.pegel, name: Pegel, yellow: input_number.pegel_gelb, red: input_number.pegel_rot }
+sky:
+  dawn: sensor.sun_next_dawn
+  rising: sensor.sun_next_rising
+  setting: sensor.sun_next_setting
+  dusk: sensor.sun_next_dusk
+  moon_phase: sensor.moon_phase
+cameras:
+  - { entity: camera.eingang, title: Eingang }

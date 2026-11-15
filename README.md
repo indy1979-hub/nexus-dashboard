@@ -1,0 +1,45 @@
+# Nexus Dashboard
+
+Szenisches Vollbild-Dashboard für Home Assistant als **eine** Lovelace-Karte: Glas-Karten über animierten Hintergründen, Symbolleiste links, fünf Seiten.
+
+| Seite | Szene | Inhalt |
+|---|---|---|
+| Zuhause | Regengarten | Uhr & Wetter, Müllabfuhr, Licht pro Raum (Helligkeit, Farben), Saugroboter, Steckdosen, Termine, nächste Abholung, Aufgaben, Fernseher |
+| Woche | Herbstwald | Nächste Termine, 14-Tage-Raster mit Mülltagen, Countdown Heiligabend, „Meine Woche“, Akkus aller Geräte |
+| Abend | Lagerfeuer | Nachtuhr, Zentrale mit Hausschaltern und Abläufen, Notaus (gedrückt halten), Fernseher |
+| Lage | Fluss bei Nacht | Wetter mit Vorhersage, Warnlage, Pegel mit Grenzen, Sonne & Mond, Kameras |
+| Netz | Weltraum | Lebende Übersichtskarte aller Bereiche |
+
+Alle Grafiken sind eigene SVG/CSS-Zeichnungen. Die Karte nutzt die Anmeldung von Home Assistant direkt – kein Token, keine eigene Seite.
+
+## Installation
+
+**Ressource hinzufügen** (Einstellungen → Dashboards → ⋮ → Ressourcen → Ressource hinzufügen, Typ „JavaScript-Modul“):
+
+```
+https://cdn.jsdelivr.net/gh/indy1979-hub/nexus-dashboard@v1.0.0/dist/nexus-dashboard.js
+```
+
+**Dashboard anlegen**: neues Dashboard → Ansicht vom Typ „Panel (einzelne Karte)“ → Karte manuell hinzufügen, Inhalt aus [`example-config.yaml`](example-config.yaml) einfügen und die Entitäten durch eigene ersetzen.
+
+## Konfiguration
+
+Alle hausbezogenen Angaben stehen in der Kartenkonfiguration, nicht im Code. Nicht genutzte Blöcke einfach weglassen. Siehe [`example-config.yaml`](example-config.yaml).
+
+- `rooms` – Räume mit `lights`, `switches`, `style` (`pendant`, `twin`, `stairs`)
+- `calendars`, `todos`, `waste` – Kalender, Aufgabenlisten, Müllsensoren (Tage + Datum)
+- `routines`, `night_actions`, `house_switches`, `emergency` – Abläufe und Schalter
+- `warnings`, `gauge`, `sky`, `cameras` – Lageseite
+
+## Selbst bauen
+
+```
+npm install
+npm run build
+```
+
+Ergebnis: `dist/nexus-dashboard.js`.
+
+## Lizenz
+
+MIT
