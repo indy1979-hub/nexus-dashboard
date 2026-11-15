@@ -2,22 +2,33 @@ import { useRef, useState, type ReactNode } from "react";
 import { Icon } from "./ui";
 import { useCalendarEvents, useConnected } from "./ha";
 import { useConf } from "./config";
-import { Autumn, Campfire, RainGarden, River, Space } from "./scenes";
+import { Autumn, Campfire, Dusk, RainGarden, River, Space } from "./scenes";
+import { HousePage } from "./pages/House";
+import { isOn, useAll } from "./ha";
 import { HomePage } from "./pages/Home";
 import { WeekPage } from "./pages/Week";
 import { ScenesPage } from "./pages/Scenes";
 import { LagePage } from "./pages/Lage";
 import { NetworkPage } from "./pages/Network";
 
-type PageId = "zuhause" | "woche" | "abend" | "lage" | "netz";
+type PageId = "zuhause" | "haus" | "woche" | "abend" | "lage" | "netz";
 
 const PAGES: { id: PageId; label: string; icon: string; scene: () => ReactNode }[] = [
   { id: "zuhause", label: "Zuhause", icon: "mdi:home-outline", scene: () => <RainGarden /> },
+  { id: "haus", label: "Haus", icon: "mdi:floor-plan", scene: () => <DuskLive /> },
   { id: "woche", label: "Woche", icon: "mdi:calendar-week-outline", scene: () => <Autumn /> },
   { id: "abend", label: "Abend", icon: "mdi:campfire", scene: () => <Campfire /> },
   { id: "lage", label: "Lage", icon: "mdi:waves", scene: () => <River /> },
   { id: "netz", label: "Netz", icon: "mdi:graph-outline", scene: () => <Space /> },
 ];
+
+/** Fenster im Haus leuchten je nach Anteil eingeschalteter Lampen. */
+function DuskLive() {
+  const all = useAll();
+  const lights = Object.values(all).filter((e) => e.entity_id.startsWith("light.") && !Array.isArray(e.attributes.entity_id));
+  const ratio = lights.length ? lights.filter(isOn).length / lights.length : 0;
+  return <Dusk litRatio={ratio} />;
+}
 
 const KEY = "nexus-dashboard-page";
 const loadPage = (): PageId => {
@@ -71,6 +82,7 @@ export function App() {
       </nav>
       <main className="stage" key={page}>
         {page === "zuhause" && <HomePage events={events} />}
+        {page === "haus" && <HousePage />}
         {page === "woche" && <WeekPage events={events} />}
         {page === "abend" && <ScenesPage />}
         {page === "lage" && <LagePage />}

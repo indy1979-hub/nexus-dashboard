@@ -12,8 +12,20 @@ export interface HassEntity {
 interface Connection {
   subscribeMessage<T>(cb: (msg: T) => void, msg: Record<string, unknown>): Promise<() => void>;
 }
+export interface EntityReg {
+  entity_id: string;
+  device_id?: string | null;
+  area_id?: string | null;
+  hidden?: boolean;
+  entity_category?: string | null;
+  platform?: string;
+  name?: string | null;
+}
 export interface Hass {
   states: Record<string, HassEntity>;
+  entities?: Record<string, EntityReg>;
+  devices?: Record<string, { id: string; area_id?: string | null; name?: string | null; name_by_user?: string | null }>;
+  areas?: Record<string, { area_id: string; name: string; icon?: string | null }>;
   connected?: boolean;
   connection: Connection;
   callService(domain: string, service: string, data?: Record<string, unknown>, target?: Record<string, unknown>): Promise<unknown>;
@@ -28,7 +40,7 @@ export function setHass(h: Hass) {
   listeners.forEach((l) => l());
 }
 export const getHass = () => current;
-const subscribe = (cb: () => void) => {
+export const subscribe = (cb: () => void) => {
   listeners.add(cb);
   return () => {
     listeners.delete(cb);
@@ -44,6 +56,12 @@ export const useEnt = (id?: string): HassEntity | undefined => useSel((h) => (id
 const EMPTY: Record<string, HassEntity> = {};
 export const useAll = (): Record<string, HassEntity> => useSel((h) => h?.states ?? EMPTY);
 export const useConnected = () => useSel((h) => h?.connected !== false);
+const EMPTY_REG = {};
+export const useRegistry = () => ({
+  entities: useSel((h) => h?.entities ?? (EMPTY_REG as Record<string, EntityReg>)),
+  devices: useSel((h) => h?.devices ?? (EMPTY_REG as NonNullable<Hass["devices"]>)),
+  areas: useSel((h) => h?.areas ?? (EMPTY_REG as NonNullable<Hass["areas"]>)),
+});
 
 /** Dienst in Home Assistant aufrufen. */
 export async function call(domain: string, service: string, data: Record<string, unknown> = {}, entityId?: string | string[]) {

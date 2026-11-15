@@ -246,3 +246,45 @@ export function River() {
     </div>
   );
 }
+
+/* ---------- Abenddämmerung mit Haus (Seite Haus) ---------- */
+export function Dusk({ litRatio = 0.5 }: { litRatio?: number }) {
+  const stars = useMemo(() => {
+    const r = rng(71);
+    return Array.from({ length: 50 }, () => ({ x: r() * 100, y: r() * 35, s: 1 + r() * 1.4, d: r() * 5 }));
+  }, []);
+  const windows = [
+    [880, 430], [940, 430], [1060, 430], [1120, 430], [880, 500], [940, 500], [1060, 500], [1120, 500], [1000, 360],
+  ];
+  const lit = Math.round(windows.length * litRatio);
+  return (
+    <div className="scene">
+      <div style={{ ...full, background: "linear-gradient(180deg,#141a3a 0%,#3b2c63 35%,#a24f6b 62%,#f19a5b 78%,#2a1b2e 100%)" }} />
+      {stars.map((s, i) => (
+        <i key={i} style={{ position: "absolute", left: `${s.x}%`, top: `${s.y}%`, width: s.s, height: s.s, borderRadius: "50%", background: "#fff", animation: `twinkle ${3 + s.d}s ease-in-out ${s.d}s infinite` }} />
+      ))}
+      <div style={{ position: "absolute", left: "12%", top: "14%", width: 70, height: 70, borderRadius: "50%", background: "radial-gradient(circle at 35% 35%, #fff7ed, #fde68a)", boxShadow: "0 0 50px 14px rgba(253,230,138,.35)" }} />
+      <svg viewBox="0 0 2000 700" preserveAspectRatio="xMidYMax slice" style={{ position: "absolute", left: 0, bottom: 0, width: "100%", height: "70%" }}>
+        <path d="M0 520 C 300 470 600 500 900 470 C 1200 440 1500 500 2000 460 V700 H0 Z" fill="#2b1b33" />
+        <path d="M0 590 C 400 560 800 600 1200 575 C 1500 560 1800 590 2000 580 V700 H0 Z" fill="#1a1022" />
+        {[200, 330, 1500, 1640, 1800].map((x, i) => (
+          <g key={i}>
+            <rect x={x - 6} y={480} width={12} height={110} fill="#140c19" />
+            <circle cx={x} cy={470} r={48 + (i % 2) * 14} fill="#1a1022" />
+          </g>
+        ))}
+        <g>
+          <rect x="840" y="390" width="320" height="200" fill="#1c1426" />
+          <path d="M820 400 L1000 290 L1180 400 Z" fill="#241a31" />
+          <rect x="1090" y="300" width="28" height="60" fill="#1c1426" />
+          {windows.map(([x, y], i) => (
+            <rect key={i} x={x - 18} y={y - 22} width={36} height={40} rx={3} fill={i < lit ? "#fcd34d" : "#2e2340"} opacity={i < lit ? 0.9 : 1}>
+              {i < lit && <animate attributeName="opacity" values=".85;1;.85" dur={`${4 + i}s`} repeatCount="indefinite" />}
+            </rect>
+          ))}
+          <rect x="985" y="520" width="30" height="70" fill={lit > 0 ? "#f59e0b" : "#2e2340"} opacity=".8" />
+        </g>
+      </svg>
+    </div>
+  );
+}

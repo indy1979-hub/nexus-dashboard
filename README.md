@@ -5,6 +5,7 @@ Szenisches Vollbild-Dashboard für Home Assistant als **eine** Lovelace-Karte: G
 | Seite | Szene | Inhalt |
 |---|---|---|
 | Zuhause | Regengarten | Uhr & Wetter, Müllabfuhr, Licht pro Raum (Helligkeit, Farben), Saugroboter, Steckdosen, Termine, nächste Abholung, Aufgaben, Fernseher |
+| Haus | Abenddämmerung | Schaltzentrale für alle Lampen und Verbraucher (nach Räumen), beliebige eingebettete HA-Karten (`house_cards`, z. B. Lageplan oder Grundriss) |
 | Woche | Herbstwald | Nächste Termine, 14-Tage-Raster mit Mülltagen, Countdown Heiligabend, „Meine Woche“, Akkus aller Geräte |
 | Abend | Lagerfeuer | Nachtuhr, Zentrale mit Hausschaltern und Abläufen, Notaus (gedrückt halten), Fernseher |
 | Lage | Fluss bei Nacht | Wetter mit Vorhersage, Warnlage, Pegel mit Grenzen, Sonne & Mond, Kameras |
@@ -32,6 +33,7 @@ Alle hausbezogenen Angaben stehen in der Kartenkonfiguration, nicht im Code. Nic
 - `calendars`, `todos`, `waste` – Kalender, Aufgabenlisten, Müllsensoren (Tage + Datum)
 - `routines`, `night_actions`, `house_switches`, `emergency` – Abläufe und Schalter
 - `warnings`, `gauge`, `sky`, `cameras` – Lageseite
+- `house_cards` – Liste `{ title, icon, card: { … } }` mit beliebigen Lovelace-Karten; `switchboard_exclude` – Entitäten/Muster für die Schaltzentrale ausblenden
 
 ## Selbst bauen
 

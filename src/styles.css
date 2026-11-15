@@ -222,6 +222,18 @@ input { font: inherit; }
 }
 
 .span2 { grid-column: span 2; }
+.house-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.ha-card-host {
+  --ha-card-background: transparent;
+  --card-background-color: rgba(10, 18, 24, .6);
+  --ha-card-border-radius: 0 0 22px 22px;
+  --ha-card-border-width: 0;
+  --ha-card-box-shadow: none;
+  --primary-text-color: #f2f7f4;
+  --secondary-text-color: rgba(242,247,244,.7);
+  border-radius: 0 0 22px 22px;
+  overflow: hidden;
+}
 
 /* ---------- kleinere Bildschirme ---------- */
 @media (max-width: 1500px) {
@@ -232,6 +244,7 @@ input { font: inherit; }
 }
 @media (max-width: 1200px) {
   .week-top { grid-template-columns: 1fr !important; }
+  .house-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 900px) {
   .span2 { grid-column: auto; }

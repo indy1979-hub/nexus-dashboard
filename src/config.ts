@@ -46,6 +46,10 @@ export interface NexusConfig {
   gauge?: { entity: string; name: string; yellow?: string; red?: string };
   sky?: { dawn?: string; rising?: string; setting?: string; dusk?: string; moon_phase?: string; moon_elevation?: string };
   cameras?: { entity: string; title: string }[];
+  /** Beliebige Home-Assistant-Karten für die Seite „Haus“ (z. B. Lageplan, Grundriss) */
+  house_cards?: { title?: string; icon?: string; card: Record<string, unknown> }[];
+  /** Schaltzentrale: Entitäten oder Muster (mit *) ausblenden */
+  switchboard_exclude?: string[];
 }
 
 export const ConfContext = createContext<NexusConfig>({});
