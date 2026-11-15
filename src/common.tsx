@@ -185,7 +185,7 @@ export function PickupTrack() {
 }
 
 /* ---------- Licht pro Raum ---------- */
-const SWATCHES: { label: string; data: Record<string, unknown>; css: string }[] = [
+export const SWATCHES: { label: string; data: Record<string, unknown>; css: string }[] = [
   { label: "Warmweiß", data: { color_temp_kelvin: 2700 }, css: "#ffc58a" },
   { label: "Neutral", data: { color_temp_kelvin: 4000 }, css: "#fff1dc" },
   { label: "Kaltweiß", data: { color_temp_kelvin: 6000 }, css: "#e8f1ff" },

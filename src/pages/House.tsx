@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { Card, Icon, Toggle } from "../ui";
-import { call, isNa, isOn, useAll, useRegistry, type HassEntity } from "../ha";
+import { Card, Icon, Slider, Toggle } from "../ui";
+import { call, isNa, isOn, lightColor, useAll, useRegistry, type HassEntity } from "../ha";
+import { SWATCHES } from "../common";
 import { useConf } from "../config";
 import { HaCard } from "../hacard";
 
@@ -9,12 +10,81 @@ type Filter = "alle" | "lampen" | "verbraucher" | "an";
 const match = (id: string, pattern: string) =>
   pattern.includes("*") ? new RegExp(`^${pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*")}$`).test(id) : id === pattern;
 
+const COLOR_MODES = ["hs", "xy", "rgb", "rgbw", "rgbww"];
+const RAINBOW = "linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)";
+
+/** Helligkeit, Farbe und Weißton einer einzelnen Lampe. */
+function LightControls({ e }: { e: HassEntity }) {
+  const id = e.entity_id;
+  const modes = (e.attributes.supported_color_modes as string[] | undefined) ?? [];
+  const canColor = modes.some((m) => COLOR_MODES.includes(m));
+  const canTemp = modes.includes("color_temp");
+  const canDim = modes.some((m) => m !== "onoff");
+  const on = isOn(e);
+  const bri = on ? Math.round(((e.attributes.brightness as number) ?? 255) / 2.55) : 0;
+  const hs = e.attributes.hs_color as number[] | undefined;
+  const hue = hs ? Math.round((hs[0] / 360) * 100) : 0;
+  const kMin = (e.attributes.min_color_temp_kelvin as number) ?? 2000;
+  const kMax = (e.attributes.max_color_temp_kelvin as number) ?? 6500;
+  const k = (e.attributes.color_temp_kelvin as number) ?? kMin;
+  const kPos = Math.round(((k - kMin) / Math.max(1, kMax - kMin)) * 100);
+  const swatches = SWATCHES.filter((s) => ("hs_color" in s.data ? canColor : canTemp));
+  if (!canDim && !canColor && !canTemp) return <div className="sub">Diese Lampe kann nur an und aus.</div>;
+  return (
+    <div className="col" style={{ gap: 12, padding: "4px 2px 2px" }}>
+      {canDim && (
+        <div>
+          <div className="label-row">
+            <span>Helligkeit</span>
+            <span className="mono">{bri}%</span>
+          </div>
+          <Slider
+            value={bri}
+            gradient={`linear-gradient(90deg, rgba(255,255,255,.15), ${on ? lightColor(e) : "#9ca3af"})`}
+            onCommit={(v) => (v === 0 ? call("light", "turn_off", {}, id) : call("light", "turn_on", { brightness_pct: v }, id))}
+          />
+        </div>
+      )}
+      {canColor && (
+        <div>
+          <div className="label-row">
+            <span>Farbe</span>
+            <span className="mono">{hs && e.attributes.color_mode !== "color_temp" ? `${Math.round(hs[0])}°` : "–"}</span>
+          </div>
+          <Slider value={hue} gradient={RAINBOW} onCommit={(v) => call("light", "turn_on", { hs_color: [Math.round((v / 100) * 360) % 360, 100] }, id)} />
+        </div>
+      )}
+      {canTemp && (
+        <div>
+          <div className="label-row">
+            <span>Weißton</span>
+            <span className="mono">{e.attributes.color_mode === "color_temp" ? `${k} K` : "–"}</span>
+          </div>
+          <Slider
+            value={kPos}
+            gradient="linear-gradient(90deg,#ffb35c,#fff1dc,#dbe8ff)"
+            onCommit={(v) => call("light", "turn_on", { color_temp_kelvin: Math.round(kMin + (v / 100) * (kMax - kMin)) }, id)}
+          />
+        </div>
+      )}
+      {swatches.length > 0 && (
+        <div className="swatches" style={{ marginTop: 2 }}>
+          {swatches.map((s) => (
+            <div key={s.label} title={s.label} className="swatch" style={{ background: s.css, color: s.css }} onClick={() => call("light", "turn_on", s.data, id)} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Alle Lampen und Verbraucher, nach Bereichen gruppiert. */
 function Switchboard() {
   const conf = useConf();
   const all = useAll();
   const { entities, devices, areas } = useRegistry();
   const [filter, setFilter] = useState<Filter>("alle");
+  const [open, setOpen] = useState<string | null>(null);
 
   const groups = useMemo(() => {
     const exclude = conf.switchboard_exclude ?? [];
@@ -49,7 +119,7 @@ function Switchboard() {
   const strip = (name: string, area: string) => (name.toLowerCase().startsWith(area.toLowerCase() + " ") ? name.slice(area.length + 1) : name);
 
   return (
-    <Card style={{ display: "flex", flexDirection: "column" }}>
+    <Card style={{ display: "flex", flexDirection: "column", background: "rgba(22, 18, 40, .78)" }}>
       <div className="between" style={{ flexWrap: "wrap" }}>
         <div className="section-title" style={{ margin: 0 }}>
           <span className="icon-chip" style={{ background: "rgba(250,204,21,.2)" }}>
@@ -102,17 +172,49 @@ function Switchboard() {
                 {items.map((e) => {
                   const light = e.entity_id.startsWith("light.");
                   const on = isOn(e);
+                  const expanded = open === e.entity_id;
+                  const bri = light && on && e.attributes.brightness !== undefined ? Math.round((e.attributes.brightness as number) / 2.55) : null;
                   return (
                     <div
                       key={e.entity_id}
                       className="list-row"
-                      style={{ margin: 0, padding: "9px 12px", background: on ? (light ? "rgba(250,204,21,.14)" : "rgba(94,234,212,.12)") : undefined, borderColor: on ? (light ? "rgba(250,204,21,.4)" : "rgba(94,234,212,.35)") : undefined }}
+                      style={{
+                        margin: 0, padding: "9px 12px", display: "block",
+                        gridColumn: expanded ? "1 / -1" : undefined,
+                        background: on ? (light ? "rgba(250,204,21,.14)" : "rgba(94,234,212,.12)") : undefined,
+                        borderColor: expanded ? "rgba(255,255,255,.45)" : on ? (light ? "rgba(250,204,21,.4)" : "rgba(94,234,212,.35)") : undefined,
+                      }}
                     >
-                      <Icon icon={light ? (on ? "mdi:lightbulb-on" : "mdi:lightbulb-outline") : e.entity_id.includes("usb") ? "mdi:usb-port" : "mdi:power-socket-de"} width={20} color={on ? (light ? "#facc15" : "#5eead4") : undefined} />
-                      <span style={{ flex: 1, minWidth: 0, fontSize: 14.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: isNa(e) ? 0.5 : 1 }}>
-                        {strip(String(e.attributes.friendly_name ?? e.entity_id), g.name)}
-                      </span>
-                      <Toggle on={on} na={isNa(e)} onClick={() => call(light ? "light" : "switch", "toggle", {}, e.entity_id)} />
+                      <div className="row">
+                        <Icon
+                          icon={light ? (on ? "mdi:lightbulb-on" : "mdi:lightbulb-outline") : e.entity_id.includes("usb") ? "mdi:usb-port" : "mdi:power-socket-de"}
+                          width={20}
+                          color={on ? (light ? lightColor(e) : "#5eead4") : undefined}
+                        />
+                        <span
+                          onClick={() => light && !isNa(e) && setOpen(expanded ? null : e.entity_id)}
+                          style={{ flex: 1, minWidth: 0, fontSize: 14.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: isNa(e) ? 0.5 : 1, cursor: light ? "pointer" : "default" }}
+                          title={light ? "Tippen: Helligkeit und Farbe" : undefined}
+                        >
+                          {strip(String(e.attributes.friendly_name ?? e.entity_id), g.name)}
+                          {bri !== null && <span className="muted" style={{ marginLeft: 6, fontSize: 12 }}>{bri}%</span>}
+                        </span>
+                        {light && !isNa(e) && (
+                          <Icon
+                            icon={expanded ? "mdi:chevron-up" : "mdi:tune-variant"}
+                            width={18}
+                            className="muted"
+                            style={{ cursor: "pointer", flex: "0 0 auto" }}
+                            onClick={() => setOpen(expanded ? null : e.entity_id)}
+                          />
+                        )}
+                        <Toggle on={on} na={isNa(e)} onClick={() => call(light ? "light" : "switch", "toggle", {}, e.entity_id)} />
+                      </div>
+                      {expanded && (
+                        <div style={{ marginTop: 10 }}>
+                          <LightControls e={e} />
+                        </div>
+                      )}
                     </div>
                   );
                 })}
