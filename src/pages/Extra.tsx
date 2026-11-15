@@ -48,7 +48,7 @@ function SectionBlock({ s }: { s: Section }) {
   const big = rest.filter((c) => !SMALL.has(String(c.type)));
   const span = Math.min(4, Math.max(1, s.column_span ?? 2));
   return (
-    <Card className={`extra-sec span-${span}`}>
+    <Card>
       {head && (
         <div className="eyebrow" style={{ color: "var(--ink-2)", marginBottom: 12, fontSize: 12 }}>
           {head}
@@ -72,6 +72,34 @@ function SectionBlock({ s }: { s: Section }) {
   );
 }
 
+/** Abschnitte auf zwei Spalten verteilen (jeweils in die kürzere), breite Abschnitte über die volle Breite. */
+type Block = { kind: "full"; s: Section } | { kind: "cols"; cols: Section[][] };
+const weight = (s: Section) => (s.cards ?? []).reduce((w, c) => w + (SMALL.has(String(c.type)) ? 0.35 : c.type === "heading" ? 0.2 : 3), 0);
+function layout(sections: Section[]): Block[] {
+  const out: Block[] = [];
+  let run: Section[] = [];
+  const flush = () => {
+    if (!run.length) return;
+    const cols: Section[][] = [[], []];
+    const h = [0, 0];
+    run.forEach((s) => {
+      const i = h[0] <= h[1] ? 0 : 1;
+      cols[i].push(s);
+      h[i] += weight(s);
+    });
+    out.push({ kind: "cols", cols });
+    run = [];
+  };
+  sections.forEach((s) => {
+    if ((s.column_span ?? 2) >= 3) {
+      flush();
+      out.push({ kind: "full", s });
+    } else run.push(s);
+  });
+  flush();
+  return out;
+}
+
 export function ExtraPage({ page }: { page: ExtraPageConf }) {
   const sections = useSourceSections(page);
   return (
@@ -84,16 +112,26 @@ export function ExtraPage({ page }: { page: ExtraPageConf }) {
           <h1 style={{ margin: 0, fontSize: 28, fontWeight: 600, letterSpacing: ".02em" }}>{page.title}</h1>
         </div>
       )}
-      <div className="extra-grid">
-        {sections.map((s, i) => (
-          <SectionBlock key={i} s={s} />
-        ))}
-        {sections.length === 0 && (
-          <Card>
-            <div className="sub">Keine Inhalte gefunden.</div>
-          </Card>
-        )}
-      </div>
+      {layout(sections).map((block, bi) =>
+        block.kind === "full" ? (
+          <SectionBlock key={bi} s={block.s} />
+        ) : (
+          <div key={bi} className="extra-cols">
+            {block.cols.map((col, ci) => (
+              <div key={ci} className="col" style={{ gap: 18, minWidth: 0 }}>
+                {col.map((s, i) => (
+                  <SectionBlock key={i} s={s} />
+                ))}
+              </div>
+            ))}
+          </div>
+        ),
+      )}
+      {sections.length === 0 && (
+        <Card>
+          <div className="sub">Keine Inhalte gefunden.</div>
+        </Card>
+      )}
     </div>
   );
 }

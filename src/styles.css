@@ -223,11 +223,7 @@ input { font: inherit; }
 }
 
 .span2 { grid-column: span 2; }
-.extra-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: start; }
-.extra-sec.span-1 { grid-column: span 1; }
-.extra-sec.span-2 { grid-column: span 2; }
-.extra-sec.span-3 { grid-column: span 3; }
-.extra-sec.span-4 { grid-column: 1 / -1; }
+.extra-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
 .ha-embed .ha-card-host {
   --ha-card-background: rgba(255,255,255,.06);
   --card-background-color: rgba(12, 18, 30, .85);
@@ -257,14 +253,9 @@ input { font: inherit; }
   .board > .stack { border-bottom: 1px solid var(--line-2); }
 }
 @media (max-width: 1200px) {
-  .extra-grid { grid-template-columns: 1fr; }
-  .extra-sec[class*="span-"] { grid-column: 1 / -1; }
+  .extra-cols { grid-template-columns: 1fr; }
   .week-top { grid-template-columns: 1fr !important; }
-  .extra-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: start; }
-.extra-sec.span-1 { grid-column: span 1; }
-.extra-sec.span-2 { grid-column: span 2; }
-.extra-sec.span-3 { grid-column: span 3; }
-.extra-sec.span-4 { grid-column: 1 / -1; }
+  .extra-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
 .ha-embed .ha-card-host {
   --ha-card-background: rgba(255,255,255,.06);
   --card-background-color: rgba(12, 18, 30, .85);
