@@ -28,11 +28,14 @@ export function Slider({
   onCommit,
   gradient = "linear-gradient(90deg, rgba(255,255,255,.25), #fff)",
   disabled,
+  track,
 }: {
   value: number;
   onCommit: (v: number) => void;
   gradient?: string;
   disabled?: boolean;
+  /** Ganze Schiene einfärben (z. B. Regenbogen für Farbton) statt nur bis zum Regler */
+  track?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { v, setV, dragging } = useDragValue(value);
@@ -60,8 +63,8 @@ export function Slider({
         onCommit(nv);
       }}
     >
-      <div className="track">
-        <div className="fill" style={{ width: `${v}%`, background: gradient }} />
+      <div className="track" style={track ? { background: track, height: 10 } : undefined}>
+        {!track && <div className="fill" style={{ width: `${v}%`, background: gradient }} />}
       </div>
       <div className="knob" style={{ left: `${v}%` }} />
     </div>

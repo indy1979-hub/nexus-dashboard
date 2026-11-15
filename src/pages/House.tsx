@@ -51,7 +51,7 @@ function LightControls({ e }: { e: HassEntity }) {
             <span>Farbe</span>
             <span className="mono">{hs && e.attributes.color_mode !== "color_temp" ? `${Math.round(hs[0])}°` : "–"}</span>
           </div>
-          <Slider value={hue} gradient={RAINBOW} onCommit={(v) => call("light", "turn_on", { hs_color: [Math.round((v / 100) * 360) % 360, 100] }, id)} />
+          <Slider value={hue} track={RAINBOW} onCommit={(v) => call("light", "turn_on", { hs_color: [Math.round((v / 100) * 360) % 360, 100] }, id)} />
         </div>
       )}
       {canTemp && (
@@ -62,7 +62,7 @@ function LightControls({ e }: { e: HassEntity }) {
           </div>
           <Slider
             value={kPos}
-            gradient="linear-gradient(90deg,#ffb35c,#fff1dc,#dbe8ff)"
+            track="linear-gradient(90deg,#ffb35c,#fff1dc,#dbe8ff)"
             onCommit={(v) => call("light", "turn_on", { color_temp_kelvin: Math.round(kMin + (v / 100) * (kMax - kMin)) }, id)}
           />
         </div>

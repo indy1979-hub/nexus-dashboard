@@ -10225,37 +10225,41 @@ function N({ children: e, className: t = "", style: n, onClick: r }) {
 		children: e
 	});
 }
-function $t({ value: e, onCommit: t, gradient: n = "linear-gradient(90deg, rgba(255,255,255,.25), #fff)", disabled: r }) {
-	let i = (0, l.useRef)(null), { v: a, setV: o, dragging: s } = Xt(e), c = (e) => {
-		let t = i.current.getBoundingClientRect();
+function $t({ value: e, onCommit: t, gradient: n = "linear-gradient(90deg, rgba(255,255,255,.25), #fff)", disabled: r, track: i }) {
+	let a = (0, l.useRef)(null), { v: o, setV: s, dragging: c } = Xt(e), u = (e) => {
+		let t = a.current.getBoundingClientRect();
 		return Math.round(Math.min(100, Math.max(0, (e - t.left) / t.width * 100)));
 	};
 	return /* @__PURE__ */ (0, M.jsxs)("div", {
-		ref: i,
+		ref: a,
 		className: "slider",
 		style: { opacity: r ? .45 : 1 },
 		onPointerDown: (e) => {
-			r || (e.target.setPointerCapture(e.pointerId), s.current = !0, o(c(e.clientX)));
+			r || (e.target.setPointerCapture(e.pointerId), c.current = !0, s(u(e.clientX)));
 		},
-		onPointerMove: (e) => s.current && o(c(e.clientX)),
+		onPointerMove: (e) => c.current && s(u(e.clientX)),
 		onPointerUp: (e) => {
-			if (!s.current) return;
-			s.current = !1;
-			let n = c(e.clientX);
-			o(n), t(n);
+			if (!c.current) return;
+			c.current = !1;
+			let n = u(e.clientX);
+			s(n), t(n);
 		},
 		children: [/* @__PURE__ */ (0, M.jsx)("div", {
 			className: "track",
-			children: /* @__PURE__ */ (0, M.jsx)("div", {
+			style: i ? {
+				background: i,
+				height: 10
+			} : void 0,
+			children: !i && /* @__PURE__ */ (0, M.jsx)("div", {
 				className: "fill",
 				style: {
-					width: `${a}%`,
+					width: `${o}%`,
 					background: n
 				}
 			})
 		}), /* @__PURE__ */ (0, M.jsx)("div", {
 			className: "knob",
-			style: { left: `${a}%` }
+			style: { left: `${o}%` }
 		})]
 	});
 }
@@ -12375,7 +12379,7 @@ function Un({ e }) {
 				})]
 			}), /* @__PURE__ */ (0, M.jsx)($t, {
 				value: l,
-				gradient: Hn,
+				track: Hn,
 				onCommit: (e) => O("light", "turn_on", { hs_color: [Math.round(e / 100 * 360) % 360, 100] }, t)
 			})] }),
 			i && /* @__PURE__ */ (0, M.jsxs)("div", { children: [/* @__PURE__ */ (0, M.jsxs)("div", {
@@ -12386,7 +12390,7 @@ function Un({ e }) {
 				})]
 			}), /* @__PURE__ */ (0, M.jsx)($t, {
 				value: p,
-				gradient: "linear-gradient(90deg,#ffb35c,#fff1dc,#dbe8ff)",
+				track: "linear-gradient(90deg,#ffb35c,#fff1dc,#dbe8ff)",
 				onCommit: (e) => O("light", "turn_on", { color_temp_kelvin: Math.round(u + e / 100 * (d - u)) }, t)
 			})] }),
 			m.length > 0 && /* @__PURE__ */ (0, M.jsx)("div", {
