@@ -34,6 +34,7 @@ Alle hausbezogenen Angaben stehen in der Kartenkonfiguration, nicht im Code. Nic
 - `routines`, `night_actions`, `house_switches`, `emergency` – Abläufe und Schalter
 - `warnings`, `gauge`, `sky`, `cameras` – Lageseite
 - `extra_pages` – weitere Seiten in der Symbolleiste; Inhalte aus einer vorhandenen HA-Ansicht (`source`) oder eigene `sections`, Hintergrund wählbar (u. a. Nordlicht)
+- `network_health` – bis zu sechs Gesundheitswerte als eigener Knoten auf der Netzkarte
 - `fuel` – Kraftstoffpreise (günstigster Preis, Wunschpreis, Preisalarm, Tankstellen im Vergleich)
 - `house_cards` – Liste `{ title, icon, card: { … } }` mit beliebigen Lovelace-Karten; `switchboard_exclude` – Entitäten/Muster für die Schaltzentrale ausblenden
 

@@ -9,7 +9,7 @@ import { setHass, type Hass } from "./ha";
 // Benötigte Symbole sind eingebettet; weitere lädt Iconify bei Bedarf nach.
 addCollection(icons as Parameters<typeof addCollection>[0]);
 
-const VERSION = "1.4.0";
+const VERSION = "1.5.0";
 
 class NexusDashboardCard extends HTMLElement {
   private root?: Root;

@@ -86,3 +86,8 @@ extra_pages:   # weitere Seiten, Inhalte aus einer vorhandenen HA-Ansicht
     title: Gesundheitszentrale
     scene: aurora      # aurora | rain | autumn | campfire | river | space | dusk
     source: { dashboard: mein-gesundheit-dashboard, view: gesundheit }
+network_health:   # Gesundheitswerte als Knoten auf der Netzkarte (bis 6)
+  items:
+    - { entity: sensor.gewicht, label: Gewicht, icon: mdi:scale-bathroom }
+    - { entity: sensor.blutdruck_sys, entity2: sensor.blutdruck_dia, label: Blutdruck, icon: mdi:water }
+    - { entity: sensor.ruhepuls, label: Ruhepuls, icon: mdi:heart }

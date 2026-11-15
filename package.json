@@ -1,6 +1,6 @@
 {
   "name": "nexus-dashboard",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Szenisches Vollbild-Dashboard für Home Assistant als Lovelace-Karte",
   "type": "module",
   "license": "MIT",

@@ -19,12 +19,34 @@ interface Node {
 const W = 1600;
 const H = 900;
 const ROOM_SLOTS = [
-  [170, 360],
+  [160, 405],
   [130, 540],
   [210, 710],
   [420, 760],
   [250, 220],
 ];
+const HEALTH_SLOTS = [
+  [80, 95],
+  [255, 45],
+  [430, 95],
+  [70, 265],
+  [440, 270],
+  [255, 300],
+];
+
+/** Messwert lesbar: Stunden als „4 h 02 min“, Schritte, Meter ab 1000 als km. */
+function fmtMeasure(state: string | undefined, unit: string | undefined): string {
+  const n = Number(state);
+  if (!Number.isFinite(n)) return state ?? "–";
+  if (unit === "h") {
+    const m = Math.round(n * 60);
+    return `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")} min`;
+  }
+  if (unit === "steps") return `${Math.round(n).toLocaleString("de-DE")} Schritte`;
+  if (unit === "m" && n >= 1000) return `${(n / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} km`;
+  return `${n.toLocaleString("de-DE", { maximumFractionDigits: 1 })}${unit ? ` ${unit}` : ""}`;
+}
+
 const VAC: Record<string, string> = { docked: "angedockt", cleaning: "saugt", returning: "fährt heim", paused: "pausiert", idle: "bereit", error: "Fehler" };
 
 export function NetworkPage({ events }: { events: CalEvent[] }) {
@@ -48,8 +70,22 @@ export function NetworkPage({ events }: { events: CalEvent[] }) {
     out.push({ id: "me", x: 820, y: 190, label: conf.person ?? "Ich", icon: "mdi:account-outline", color: C.me, size: 108 });
     if (phone) out.push({ id: "tel", parent: "me", x: 610, y: 95, label: "Telefon", value: `${phone.state} %`, icon: "mdi:cellphone", color: C.me });
     if ((conf.calendars ?? []).length)
-      out.push({ id: "kal", parent: "me", x: 520, y: 250, label: "Kalender", value: next ? `${relDay(Math.max(0, dayDiff(next.start)))}: ${next.summary.slice(0, 22)}` : "frei", icon: "mdi:calendar-month-outline", color: C.me });
+      out.push({ id: "kal", parent: "me", x: conf.network_health ? 640 : 520, y: conf.network_health ? 300 : 250, label: "Kalender", value: next ? `${relDay(Math.max(0, dayDiff(next.start)))}: ${next.summary.slice(0, 22)}` : "frei", icon: "mdi:calendar-month-outline", color: C.me });
     if ((conf.todos ?? []).length) out.push({ id: "todo", parent: "me", x: 1030, y: 90, label: "Aufgaben", value: `${todos} offen`, icon: "mdi:checkbox-marked-outline", color: C.me });
+
+    const health = conf.network_health;
+    if (health && health.items.length) {
+      const H = "#fb7185";
+      out.push({ id: "health", x: 255, y: 170, label: health.label ?? "Gesundheit", icon: health.icon ?? "mdi:heart-pulse", color: H, size: 96 });
+      health.items.slice(0, HEALTH_SLOTS.length).forEach((it, i) => {
+        const a = all[it.entity];
+        if (!a) return;
+        const b = it.entity2 ? all[it.entity2] : undefined;
+        const unit = a.attributes.unit_of_measurement as string | undefined;
+        const value = b ? `${Math.round(Number(a.state))}/${Math.round(Number(b.state))}${unit ? ` ${unit}` : ""}` : fmtMeasure(a.state, unit);
+        out.push({ id: `h${i}`, parent: "health", x: HEALTH_SLOTS[i][0], y: HEALTH_SLOTS[i][1], label: it.label, value, icon: it.icon ?? "mdi:heart-outline", color: H });
+      });
+    }
 
     const rooms = (conf.rooms ?? []).slice(0, ROOM_SLOTS.length);
     if (rooms.length) {

@@ -61,6 +61,8 @@ export interface NexusConfig {
   cameras?: { entity: string; title: string }[];
   /** Beliebige Home-Assistant-Karten für die Seite „Haus“ (z. B. Lageplan, Grundriss) */
   house_cards?: { title?: string; icon?: string; card: Record<string, unknown> }[];
+  /** Gesundheitswerte als eigener Knoten auf der Netzkarte (bis 6 Werte) */
+  network_health?: { label?: string; icon?: string; items: { entity: string; entity2?: string; label: string; icon?: string }[] };
   /** Zusätzliche Seiten in der Symbolleiste (nach „Haus“) */
   extra_pages?: ExtraPageConf[];
   /** Kraftstoffpreise, z. B. aus Tankerkönig */
