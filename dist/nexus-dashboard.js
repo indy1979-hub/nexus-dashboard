@@ -12556,7 +12556,7 @@ function Wn() {
 								gap: 8
 							},
 							children: t.map((t) => {
-								let n = t.entity_id.startsWith("light."), r = k(t), i = s === t.entity_id, a = n && r && t.attributes.brightness !== void 0 ? Math.round(t.attributes.brightness / 2.55) : null;
+								let n = t.entity_id.startsWith("light."), r = k(t), i = s === t.entity_id, a = t.attributes.supported_color_modes ?? [], o = n && !A(t) && a.some((e) => e !== "onoff"), l = n && r && t.attributes.brightness !== void 0 ? Math.round(t.attributes.brightness / 2.55) : null;
 								return /* @__PURE__ */ (0, M.jsxs)("div", {
 									className: "list-row",
 									style: {
@@ -12576,7 +12576,7 @@ function Wn() {
 												color: r ? n ? j(t) : "#5eead4" : void 0
 											}),
 											/* @__PURE__ */ (0, M.jsxs)("span", {
-												onClick: () => n && !A(t) && c(i ? null : t.entity_id),
+												onClick: () => o && c(i ? null : t.entity_id),
 												style: {
 													flex: 1,
 													minWidth: 0,
@@ -12585,19 +12585,19 @@ function Wn() {
 													overflow: "hidden",
 													textOverflow: "ellipsis",
 													opacity: A(t) ? .5 : 1,
-													cursor: n ? "pointer" : "default"
+													cursor: o ? "pointer" : "default"
 												},
-												title: n ? "Tippen: Helligkeit und Farbe" : void 0,
-												children: [h(String(t.attributes.friendly_name ?? t.entity_id), e.name), a !== null && /* @__PURE__ */ (0, M.jsxs)("span", {
+												title: o ? "Tippen: Helligkeit und Farbe" : void 0,
+												children: [h(String(t.attributes.friendly_name ?? t.entity_id), e.name), l !== null && /* @__PURE__ */ (0, M.jsxs)("span", {
 													className: "muted",
 													style: {
 														marginLeft: 6,
 														fontSize: 12
 													},
-													children: [a, "%"]
+													children: [l, "%"]
 												})]
 											}),
-											n && !A(t) && /* @__PURE__ */ (0, M.jsx)(E, {
+											o && /* @__PURE__ */ (0, M.jsx)(E, {
 												icon: i ? "mdi:chevron-up" : "mdi:tune-variant",
 												width: 18,
 												className: "muted",

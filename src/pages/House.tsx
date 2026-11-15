@@ -173,6 +173,8 @@ function Switchboard() {
                   const light = e.entity_id.startsWith("light.");
                   const on = isOn(e);
                   const expanded = open === e.entity_id;
+                  const modes = (e.attributes.supported_color_modes as string[] | undefined) ?? [];
+                  const adjustable = light && !isNa(e) && modes.some((m) => m !== "onoff");
                   const bri = light && on && e.attributes.brightness !== undefined ? Math.round((e.attributes.brightness as number) / 2.55) : null;
                   return (
                     <div
@@ -192,14 +194,14 @@ function Switchboard() {
                           color={on ? (light ? lightColor(e) : "#5eead4") : undefined}
                         />
                         <span
-                          onClick={() => light && !isNa(e) && setOpen(expanded ? null : e.entity_id)}
-                          style={{ flex: 1, minWidth: 0, fontSize: 14.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: isNa(e) ? 0.5 : 1, cursor: light ? "pointer" : "default" }}
-                          title={light ? "Tippen: Helligkeit und Farbe" : undefined}
+                          onClick={() => adjustable && setOpen(expanded ? null : e.entity_id)}
+                          style={{ flex: 1, minWidth: 0, fontSize: 14.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", opacity: isNa(e) ? 0.5 : 1, cursor: adjustable ? "pointer" : "default" }}
+                          title={adjustable ? "Tippen: Helligkeit und Farbe" : undefined}
                         >
                           {strip(String(e.attributes.friendly_name ?? e.entity_id), g.name)}
                           {bri !== null && <span className="muted" style={{ marginLeft: 6, fontSize: 12 }}>{bri}%</span>}
                         </span>
-                        {light && !isNa(e) && (
+                        {adjustable && (
                           <Icon
                             icon={expanded ? "mdi:chevron-up" : "mdi:tune-variant"}
                             width={18}
