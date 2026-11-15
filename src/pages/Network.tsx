@@ -26,12 +26,12 @@ const ROOM_SLOTS = [
   [250, 220],
 ];
 const HEALTH_SLOTS = [
-  [80, 95],
-  [255, 45],
-  [430, 95],
-  [70, 265],
-  [440, 270],
-  [255, 300],
+  [135, 61],
+  [295, 33],
+  [424, 106],
+  [65, 170],
+  [135, 279],
+  [295, 307],
 ];
 
 /** Messwert lesbar: Stunden als „4 h 02 min“, Schritte, Meter ab 1000 als km. */
