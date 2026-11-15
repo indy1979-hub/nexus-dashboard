@@ -79,3 +79,10 @@ fuel:    # z. B. Tankerkönig
   alarm: automation.diesel_preisalarm
   stations: [sensor.tankstelle_a_diesel, sensor.tankstelle_b_diesel]
   show: 5
+extra_pages:   # weitere Seiten, Inhalte aus einer vorhandenen HA-Ansicht
+  - id: gesundheit
+    label: Gesundheit
+    icon: mdi:heart-pulse
+    title: Gesundheitszentrale
+    scene: aurora      # aurora | rain | autumn | campfire | river | space | dusk
+    source: { dashboard: mein-gesundheit-dashboard, view: gesundheit }

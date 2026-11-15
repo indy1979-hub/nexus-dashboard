@@ -18,6 +18,19 @@ export interface TodoConf { entity: string; label: string; color?: string }
 export interface WasteConf { entity: string; date?: string; name: string; icon?: string; color?: string }
 export interface ActionConf { entity: string; label: string; icon?: string; color?: string; domain?: string; service?: string; data?: Record<string, unknown> }
 
+export interface ExtraPageConf {
+  id: string;
+  label: string;
+  icon?: string;
+  title?: string;
+  /** Hintergrund: aurora | rain | autumn | campfire | river | space | dusk */
+  scene?: string;
+  /** Abschnitte aus einer vorhandenen HA-Ansicht übernehmen */
+  source?: { dashboard: string; view?: string };
+  /** oder eigene Abschnitte: [{ column_span, cards: [...] }] */
+  sections?: { column_span?: number; cards?: Record<string, unknown>[] }[];
+}
+
 export interface NexusConfig {
   type?: string;
   title?: string;
@@ -48,6 +61,8 @@ export interface NexusConfig {
   cameras?: { entity: string; title: string }[];
   /** Beliebige Home-Assistant-Karten für die Seite „Haus“ (z. B. Lageplan, Grundriss) */
   house_cards?: { title?: string; icon?: string; card: Record<string, unknown> }[];
+  /** Zusätzliche Seiten in der Symbolleiste (nach „Haus“) */
+  extra_pages?: ExtraPageConf[];
   /** Kraftstoffpreise, z. B. aus Tankerkönig */
   fuel?: { label?: string; cheapest?: string; cheapest_station?: string; target?: string; alarm?: string; stations?: string[]; show?: number };
   /** Schaltzentrale: Entitäten oder Muster (mit *) ausblenden */

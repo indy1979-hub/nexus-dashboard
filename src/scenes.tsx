@@ -288,3 +288,39 @@ export function Dusk({ litRatio = 0.5 }: { litRatio?: number }) {
     </div>
   );
 }
+
+/* ---------- Nordlicht ---------- */
+export function Aurora() {
+  const stars = useMemo(() => {
+    const r = rng(83);
+    return Array.from({ length: 110 }, () => ({ x: r() * 100, y: r() * 70, s: 0.8 + r() * 1.6, d: r() * 5 }));
+  }, []);
+  const band = (top: string, c1: string, c2: string, dur: number, delay: number): CSSProperties => ({
+    position: "absolute", left: "-20%", right: "-20%", top, height: "38%",
+    background: `linear-gradient(90deg, transparent, ${c1} 25%, ${c2} 55%, transparent 85%)`,
+    filter: "blur(40px)", opacity: 0.55, borderRadius: "50%",
+    transformOrigin: "50% 50%", animation: `aurora ${dur}s ease-in-out ${delay}s infinite alternate`,
+  });
+  return (
+    <div className="scene">
+      <div style={{ ...full, background: "linear-gradient(180deg,#020617 0%,#071a2b 45%,#0b2a2a 75%,#04110f 100%)" }} />
+      {stars.map((s, i) => (
+        <i key={i} style={{ position: "absolute", left: `${s.x}%`, top: `${s.y}%`, width: s.s, height: s.s, borderRadius: "50%", background: "#fff", animation: `twinkle ${3 + s.d}s ease-in-out ${s.d}s infinite` }} />
+      ))}
+      <div style={band("6%", "rgba(52,211,153,.9)", "rgba(45,212,191,.7)", 14, 0)} />
+      <div style={band("18%", "rgba(167,139,250,.7)", "rgba(52,211,153,.6)", 18, -6)} />
+      <div style={band("28%", "rgba(34,211,238,.5)", "rgba(244,114,182,.45)", 22, -11)} />
+      <svg viewBox="0 0 2000 500" preserveAspectRatio="xMidYMax slice" style={{ position: "absolute", left: 0, bottom: 0, width: "100%", height: "45%" }}>
+        <path d="M0 360 L180 220 L330 320 L520 160 L700 300 L860 210 L1040 330 L1220 180 L1420 310 L1600 200 L1800 300 L2000 230 V500 H0 Z" fill="#0a1d22" />
+        <path d="M520 160 L560 200 L540 196 L580 230 L470 230 L500 200 Z M1220 180 L1260 220 L1240 216 L1280 246 L1170 246 L1200 216 Z" fill="#cbd5e1" opacity=".35" />
+        <path d="M0 420 C 300 380 600 430 1000 400 C 1400 370 1700 420 2000 395 V500 H0 Z" fill="#061214" />
+        {Array.from({ length: 34 }).map((_, i) => {
+          const x = i * 60 + ((i * 37) % 30);
+          const hgt = 50 + ((i * 53) % 50);
+          return <path key={i} d={`M${x} ${470 - hgt} L${x - 16} 470 L${x + 16} 470 Z`} fill="#03100f" />;
+        })}
+        <rect x="0" y="468" width="2000" height="32" fill="#03100f" />
+      </svg>
+    </div>
+  );
+}

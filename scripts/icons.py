@@ -7,7 +7,7 @@ names = set()
 for f in list((root / "src").rglob("*.tsx")) + list((root / "src").rglob("*.ts")) + [root / "example-config.yaml"]:
     if f.exists():
         names |= set(re.findall(r"mdi:([a-z0-9-]+)", f.read_text()))
-names |= {"satellite-variant", "map-outline", "battery", "battery-50", "cellphone", "tablet", "watch", "remote", "motion-sensor", "thermometer"}
+names |= {"heart-pulse", "heart-plus-outline", "satellite-variant", "map-outline", "battery", "battery-50", "cellphone", "tablet", "watch", "remote", "motion-sensor", "thermometer"}
 
 icons, aliases = {}, {}
 for n in sorted(names):

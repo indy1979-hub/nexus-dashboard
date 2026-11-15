@@ -215,6 +215,7 @@ input { font: inherit; }
 @keyframes pulse { 0%,100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.05); opacity: 1; } }
 @keyframes drive { 0% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 100% { transform: translateX(-8px); } }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes aurora { 0% { transform: translateX(-6%) skewY(-4deg) scaleY(.8); } 100% { transform: translateX(6%) skewY(5deg) scaleY(1.2); } }
 @keyframes cloud { from { transform: translateX(-20%); } to { transform: translateX(120%); } }
 
 @media (prefers-reduced-motion: reduce) {
@@ -222,6 +223,19 @@ input { font: inherit; }
 }
 
 .span2 { grid-column: span 2; }
+.extra-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.extra-sec.span-1 { grid-column: span 1; }
+.extra-sec.span-2 { grid-column: span 2; }
+.extra-sec.span-3 { grid-column: span 3; }
+.extra-sec.span-4 { grid-column: 1 / -1; }
+.ha-embed .ha-card-host {
+  --ha-card-background: rgba(255,255,255,.06);
+  --card-background-color: rgba(12, 18, 30, .85);
+  --ha-card-border-radius: 16px;
+  --ha-card-border-width: 1px;
+  --ha-card-border-color: rgba(255,255,255,.08);
+  border-radius: 16px;
+}
 .house-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; align-items: start; }
 .ha-card-host {
   --ha-card-background: transparent;
@@ -243,8 +257,23 @@ input { font: inherit; }
   .board > .stack { border-bottom: 1px solid var(--line-2); }
 }
 @media (max-width: 1200px) {
+  .extra-grid { grid-template-columns: 1fr; }
+  .extra-sec[class*="span-"] { grid-column: 1 / -1; }
   .week-top { grid-template-columns: 1fr !important; }
-  .house-grid { grid-template-columns: 1fr; }
+  .extra-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.extra-sec.span-1 { grid-column: span 1; }
+.extra-sec.span-2 { grid-column: span 2; }
+.extra-sec.span-3 { grid-column: span 3; }
+.extra-sec.span-4 { grid-column: 1 / -1; }
+.ha-embed .ha-card-host {
+  --ha-card-background: rgba(255,255,255,.06);
+  --card-background-color: rgba(12, 18, 30, .85);
+  --ha-card-border-radius: 16px;
+  --ha-card-border-width: 1px;
+  --ha-card-border-color: rgba(255,255,255,.08);
+  border-radius: 16px;
+}
+.house-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 900px) {
   .span2 { grid-column: auto; }
