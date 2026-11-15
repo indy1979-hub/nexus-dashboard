@@ -48,6 +48,8 @@ export interface NexusConfig {
   cameras?: { entity: string; title: string }[];
   /** Beliebige Home-Assistant-Karten für die Seite „Haus“ (z. B. Lageplan, Grundriss) */
   house_cards?: { title?: string; icon?: string; card: Record<string, unknown> }[];
+  /** Kraftstoffpreise, z. B. aus Tankerkönig */
+  fuel?: { label?: string; cheapest?: string; cheapest_station?: string; target?: string; alarm?: string; stations?: string[]; show?: number };
   /** Schaltzentrale: Entitäten oder Muster (mit *) ausblenden */
   switchboard_exclude?: string[];
 }

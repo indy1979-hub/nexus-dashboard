@@ -71,3 +71,11 @@ sky:
   moon_phase: sensor.moon_phase
 cameras:
   - { entity: camera.eingang, title: Eingang }
+fuel:    # z. B. Tankerkönig
+  label: Diesel
+  cheapest: sensor.diesel_guenstigster_preis
+  cheapest_station: sensor.diesel_guenstigste_tankstelle
+  target: input_number.diesel_wunschpreis
+  alarm: automation.diesel_preisalarm
+  stations: [sensor.tankstelle_a_diesel, sensor.tankstelle_b_diesel]
+  show: 5

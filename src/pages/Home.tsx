@@ -2,6 +2,7 @@ import { Card, Icon, Seg } from "../ui";
 import { VacuumDock } from "../illus";
 import { call, isNa, useEnt, type CalEvent } from "../ha";
 import { useConf } from "../config";
+import { FuelCard } from "../fuel";
 import { ClockWeather, EventsCard, LightRoom, MuellList, PickupTrack, PlugsCard, TasksCard, TvBar } from "../common";
 
 const VAC_STATE: Record<string, string> = {
@@ -89,6 +90,7 @@ export function HomePage({ events }: { events: CalEvent[] }) {
           {conf.vacuum && <RobiCard />}
         </div>
         <div className="stack" style={{ gridColumn: 4, gridRow: 1 }}>
+          {conf.fuel && <FuelCard />}
           {plugRooms.map((r) => (
             <PlugsCard key={r.id} room={r} compact />
           ))}

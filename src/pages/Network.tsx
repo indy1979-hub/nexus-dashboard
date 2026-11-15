@@ -82,10 +82,13 @@ export function NetworkPage({ events }: { events: CalEvent[] }) {
     const w = conf.weather ? all[conf.weather] : undefined;
     const lvl = conf.warnings?.level ? all[conf.warnings.level] : undefined;
     const g = conf.gauge ? all[conf.gauge.entity] : undefined;
-    if (w || lvl || g) {
+    const fuelBest = conf.fuel?.cheapest ? all[conf.fuel.cheapest] : undefined;
+    if (w || lvl || g || fuelBest) {
       out.push({ id: "lage", x: 1260, y: 310, label: "Lage", icon: "mdi:radar", color: C.lage, size: 104 });
       if (w) out.push({ id: "wx", parent: "lage", x: 1470, y: 160, label: "Wetter", value: `${Math.round(Number(w.attributes.temperature))}°`, icon: "mdi:weather-partly-cloudy", color: C.lage });
       if (lvl) out.push({ id: "warn", parent: "lage", x: 1510, y: 360, label: "Warnstufe", value: lvl.state, icon: "mdi:alert-outline", color: C.lage });
+      if (fuelBest && Number.isFinite(Number(fuelBest.state)))
+        out.push({ id: "fuel", parent: "lage", x: 1450, y: 470, label: conf.fuel?.label ?? "Diesel", value: `${Number(fuelBest.state).toLocaleString("de-DE", { minimumFractionDigits: 3 })} €`, icon: "mdi:gas-station", color: C.lage });
       if (g) out.push({ id: "gauge", parent: "lage", x: 1130, y: 120, label: conf.gauge!.name, value: `${g.state} ${g.attributes.unit_of_measurement ?? ""}`, icon: "mdi:waves", color: C.lage });
     }
 
